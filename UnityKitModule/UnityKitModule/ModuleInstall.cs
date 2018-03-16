@@ -20,7 +20,7 @@ namespace Liangddyy.UnityKitModule
         private static readonly string ivyFileName = "ivy.xml";
 
         private static readonly string ivyString =
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ivy-module version = \"2.0\" ><info version=\"{UnityVersion}\" organisation=\"Unity\" module=\"{ModuleName}\" e:packageType=\"UnityExtension\" e:unityVersion=\"{UnityVersion}\" xmlns:e=\"http://ant.apache.org/ivy/extra\" /><publications xmlns:e=\"http://ant.apache.org/ivy/extra\"><artifact name = \"Editor/{ModuleName}\" type=\"dll\" ext=\"dll\" e:guid=\"87e4be8f-a296-4da3-bdef-ca409e4522f3\" /></publications></ivy-module>";
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><ivy-module version = \"2.0\" ><info version=\"{UnityVersion}\" organisation=\"Unity\" module=\"{ModuleName}\" e:packageType=\"UnityExtension\" e:unityVersion=\"{UnityVersion}\" xmlns:e=\"http://ant.apache.org/ivy/extra\" /><publications xmlns:e=\"http://ant.apache.org/ivy/extra\"><artifact name = \"Editor/{ModuleName}\" type=\"dll\" ext=\"dll\" e:guid=\"80a3616ca19596e4da0f10f14d241e9f\" /></publications></ivy-module>";
 
         private static bool WriteModule2File(string dllFileFullPath, string modulePath, string moduleName)
         {
@@ -60,7 +60,15 @@ namespace Liangddyy.UnityKitModule
             var files = AssetDatabase.FindAssets(moduleOrDllName);
             if (!files.Any())
                 throw new ArgumentException("操作中断，在当前项目中没找到需要的 Dll文件");
-            string filePath = AssetDatabase.GUIDToAssetPath(files[0]);
+
+            string filePath = "";// = AssetDatabase.GUIDToAssetPath(files[0]);
+            foreach (var file in files)
+            {
+                filePath = AssetDatabase.GUIDToAssetPath(file);
+                if (filePath.EndsWith(".dll"))
+                    break;
+            }
+            if(string.IsNullOrEmpty(filePath)) throw new ArgumentException("操作中断，在当前项目中没找到需要的 Dll文件");
             string dllFilePath = PathUtil.AssetPath2FullPath(filePath);
 
             bool isSuccess = WriteModule2File(dllFilePath, moduleDir, moduleOrDllName);
