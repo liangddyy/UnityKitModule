@@ -16,7 +16,6 @@ namespace Liangddyy.UnityKitModule.Clipboard
     public class QuickCopy
     {
         #region 菜单
-
         [MenuItem("Assets/粘贴", false, 20)]
         private static void Paste()
         {
@@ -163,23 +162,48 @@ namespace Liangddyy.UnityKitModule.Clipboard
         {
             bool isAuto = EditorPrefs.GetBool(KeyAutoRefresh, true);
             if (isAuto) EditorPrefs.SetBool(KeyAutoRefresh, false);
-            foreach (var path in sourcePaths)
+            bool isOverrite = false;
+            bool isAsked = false;
+            try
             {
-                string destName = Path.Combine(targetPath, Path.GetFileName(path));
-                if (File.Exists(path))
+                foreach (var source in sourcePaths)
                 {
-                    File.Copy(path, destName);
-                }
-                else
-                {
-                    CopyDir(path, destName);
+                    string destName = Path.Combine(targetPath, Path.GetFileName(source));
+                    if (File.Exists(source))
+                    {
+                        if (File.Exists(destName))
+                        {
+                            if (!isAsked)
+                            {
+                                isOverrite = EditorUtility.DisplayDialog("提示", strOverriteAsk, "覆盖", "跳过");
+                                isAsked = true;
+                            }
+                            if (isOverrite)
+                                File.Delete(destName);
+                            else
+                                continue;   
+                        }
+                        File.Copy(source, destName);
+                    }
+                    else
+                    {
+                        CopyDir(source, destName,ref isOverrite,ref isAsked);
+                    }
                 }
             }
-            if (isAuto) EditorPrefs.SetBool(KeyAutoRefresh, true);
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
+            finally
+            {
+                if (isAuto) EditorPrefs.SetBool(KeyAutoRefresh, true);
+            }
             AssetDatabase.Refresh();
         }
 
-        public static void CopyDir(string sourcePath, string destinationPath)
+        private static readonly string strOverriteAsk = "此次粘贴资源中有重名资源。如何操作？";
+        public static void CopyDir(string sourcePath, string destinationPath,ref bool isOverrite,ref bool isAsked)
         {
             DirectoryInfo info = new DirectoryInfo(sourcePath);
             if (!Directory.Exists(destinationPath))
@@ -190,12 +214,24 @@ namespace Liangddyy.UnityKitModule.Clipboard
 
                 if (fsi is FileInfo)
                 {
+                    if (File.Exists(destName))
+                    {
+                        if (!isAsked)
+                        {
+                            isOverrite = EditorUtility.DisplayDialog("提示", strOverriteAsk, "覆盖", "跳过");
+                            isAsked = true;
+                        }
+                        if (isOverrite)
+                            File.Delete(destName);
+                        else
+                            continue;
+                    }   
                     File.Copy(fsi.FullName, destName);
                 }
                 else
                 {
                     Directory.CreateDirectory(destName);
-                    CopyDir(fsi.FullName, destName);
+                    CopyDir(fsi.FullName, destName,ref isOverrite,ref isAsked);
                 }
             }
         }
