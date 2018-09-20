@@ -13,24 +13,43 @@ namespace Liangddyy.UnityKitModule.Folder
         {
             string sourseFloder = EditorUtility.OpenFolderPanel("选择源文件夹", PathUtil.ApplicationBasePath, "");
             if (string.IsNullOrEmpty(sourseFloder))
-                throw new ArgumentException("无效的路径");
+            {
+                Debug.Log("无效的路径");
+                return;
+            }
 
             string toPath = PathUtil.AssetPath2FullPath(AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0]));
             string toFolderPath = Path.Combine(toPath, Path.GetFileName(sourseFloder));
             if (Directory.Exists(toFolderPath))
                 throw new ArgumentException("操作终止" + toPath + " 路径下已存在同名文件夹");
-            sourseFloder = sourseFloder.Replace("/", "\\");
-            toFolderPath = toFolderPath.Replace("/", "\\");
-            string cmd = string.Format("mklink /j {0} {1} & echo ok", toFolderPath, sourseFloder);
-            Debug.Log(cmd);
-            string result = ShellUtil.RunCmdCommand(cmd);
-            if (result.Contains("<<===>>"))
+            if (PlatformEditor.IsWinPlatform)
             {
-                AssetDatabase.Refresh();
+                sourseFloder = sourseFloder.Replace("/", "\\");
+                toFolderPath = toFolderPath.Replace("/", "\\");
+                string cmd = string.Format("mklink /j {0} {1} & echo ok", toFolderPath, sourseFloder);
+
+//                Debug.Log("Windows Os Excute:" + cmd);
+                string result = ShellUtil.RunCmdCommand(cmd);
+                if (result.Contains("<<===>>"))
+                {
+                    AssetDatabase.Refresh();
+                }
+                else
+                {
+                    Debug.LogError("操作可能出错，请自行检查");
+                }
             }
-            else
+            else if (PlatformEditor.IsOSXPlatform)
             {
-                Debug.LogError("操作可能出错，请自行检查");
+                sourseFloder = sourseFloder.Replace("\\", "/");
+                toFolderPath = toFolderPath.Replace("\\", "/");
+                string cmd = string.Format("ln -s {0} {1}", sourseFloder, toFolderPath);
+
+//                Debug.Log("Mac OS Excute：" + cmd);
+                ShellHelper.ShellRequest req = ShellHelper.ProcessCommand(cmd, "");
+                req.onLog += delegate(int arg1, string arg2) { Debug.Log(arg2); };
+                req.onDone += AssetDatabase.Refresh;
+                req.onError += delegate { Debug.LogError("脚本执行错误,请检查"); };
             }
         }
 

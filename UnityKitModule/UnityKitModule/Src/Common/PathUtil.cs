@@ -16,6 +16,9 @@ namespace Liangddyy.UnityKitModule.Common
             return Path.Combine(ApplicationBasePath, assetPath);
         }
 
+        /// <summary>
+        /// Unity拓展文件夹路径
+        /// </summary>
         public static string UnityExtensionDir
         {
             get
