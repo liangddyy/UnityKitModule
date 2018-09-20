@@ -49,13 +49,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <Compile Include="Clipboard\QuickCopy.cs" />
-    <Compile Include="Common\ShellUtil.cs" />
-    <Compile Include="Common\PathUtil.cs" />
-    <Compile Include="Common\SelectionUtil.cs" />
-    <Compile Include="Folder\MkLink.cs" />
-    <Compile Include="ModuleInstall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Clipboard\QuickCopy.cs" />
+    <Compile Include="Src\Common\PathUtil.cs" />
+    <Compile Include="Src\Common\SelectionUtil.cs" />
+    <Compile Include="Src\Common\ShellUtil.cs" />
+    <Compile Include="Src\Folder\MkLink.cs" />
+    <Compile Include="Src\ModuleInstall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
