@@ -78,7 +78,7 @@ namespace Liangddyy.UnityKitModule
                 EditorUtility.OpenWithDefaultApp(moduleDir);
                 return;
             }
-//            Debug.LogError("安装失败,任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。");
+            
             isSuccess = EditorUtility.DisplayDialog("安装失败","任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。", "手动操作", "cancel");
             if (isSuccess)
             {
