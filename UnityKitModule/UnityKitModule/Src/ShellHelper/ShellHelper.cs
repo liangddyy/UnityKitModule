@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -50,10 +48,11 @@ public class ShellHelper
     {
         get
         {
+            string app = "";
 #if UNITY_EDITOR_WIN
-			string app = "cmd.exe";
+			app = "cmd.exe";
 #elif UNITY_EDITOR_OSX
-            string app = "bash";
+            app = "bash";
 #endif
             return app;
         }
@@ -101,11 +100,12 @@ public class ShellHelper
             {
                 ProcessStartInfo start = new ProcessStartInfo(shellApp);
 
+                string splitChar = "";
 #if UNITY_EDITOR_OSX
-                string splitChar = ":";
+                splitChar = ":";
                 start.Arguments = "-c";
 #elif UNITY_EDITOR_WIN
-				string splitChar = ";";
+				splitChar = ";";
 				start.Arguments = "/c";
 				#endif
 
