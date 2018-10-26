@@ -39,6 +39,7 @@ namespace Liangddyy.UnityKitModule.Common
                     return false;
                 }
             }
+
             return true;
         }
 

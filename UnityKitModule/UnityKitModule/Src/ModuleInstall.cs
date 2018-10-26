@@ -61,14 +61,15 @@ namespace Liangddyy.UnityKitModule
             if (!files.Any())
                 throw new ArgumentException("操作中断，在当前项目中没找到需要的 Dll文件");
 
-            string filePath = "";// = AssetDatabase.GUIDToAssetPath(files[0]);
+            string filePath = ""; // = AssetDatabase.GUIDToAssetPath(files[0]);
             foreach (var file in files)
             {
                 filePath = AssetDatabase.GUIDToAssetPath(file);
                 if (filePath.EndsWith(".dll"))
                     break;
             }
-            if(string.IsNullOrEmpty(filePath)) throw new ArgumentException("操作中断，在当前项目中没找到需要的 Dll文件");
+
+            if (string.IsNullOrEmpty(filePath)) throw new ArgumentException("操作中断，在当前项目中没找到需要的 Dll文件");
             string dllFilePath = PathUtil.AssetPath2FullPath(filePath);
 
             bool isSuccess = WriteModule2File(dllFilePath, moduleDir, moduleOrDllName);
@@ -78,8 +79,9 @@ namespace Liangddyy.UnityKitModule
                 EditorUtility.OpenWithDefaultApp(moduleDir);
                 return;
             }
-            
-            isSuccess = EditorUtility.DisplayDialog("安装失败","任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。", "手动操作", "cancel");
+
+            isSuccess = EditorUtility.DisplayDialog("安装失败",
+                "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。", "手动操作", "cancel");
             if (isSuccess)
             {
                 string modulePath = Path.Combine(Application.temporaryCachePath, moduleOrDllName);

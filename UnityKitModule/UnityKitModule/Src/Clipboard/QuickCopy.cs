@@ -16,6 +16,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
     public class QuickCopy
     {
         #region 菜单
+
         [MenuItem("Assets/粘贴", false, 20)]
         private static void Paste()
         {
@@ -33,6 +34,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
             {
                 throw new FormatException("没有从剪切板解析到有效的数据!");
             }
+
             if (item == null) throw new ArgumentException("没有从剪切板解析到有效的数据!");
             string assetPath = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0]);
             switch (item.Type)
@@ -66,6 +68,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
                 string path = AssetDatabase.GUIDToAssetPath(guiD);
                 item.Values.Add(PathUtil.AssetPath2FullPath(path));
             }
+
             CopyClipboardItem(item);
             Debug.Log("已复制" + Selection.assetGUIDs.Length + "条数据，可在其他 Unity 编辑器里粘贴！");
         }
@@ -76,7 +79,10 @@ namespace Liangddyy.UnityKitModule.Clipboard
             return Selection.assetGUIDs.Length > 0;
         }
 
-
+#if UNITY_EDITOR_WIN
+/// <summary>
+/// 仅限Windows平台下使用
+/// </summary>
         [MenuItem("Assets/工具箱/复制 - 到剪贴板", false, 22)]
         private static void CopyToClipboard()
         {
@@ -89,6 +95,8 @@ namespace Liangddyy.UnityKitModule.Clipboard
             }
             CopyToClipboard(paths);
         }
+#endif
+
 
         public static void CopyToClipboard(List<string> fullPaths)
         {
@@ -100,6 +108,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
                 stringBuilder.Append(fullPaths[i]);
                 stringBuilder.Append("\"");
             }
+
             if (ShellUtil.RunPowershellCommand(stringBuilder.Replace("/", "\\").ToString()))
                 Debug.Log("已复制文件列表到 剪切板！！！");
             else
@@ -120,6 +129,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
             {
                 assetPaths[i] = AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[i]);
             }
+
             string outPath = Path.Combine(Application.temporaryCachePath,
                 Random.Range(0, 1024) + ".unitypackage");
             AssetDatabase.ExportPackage(assetPaths, outPath,
@@ -178,16 +188,18 @@ namespace Liangddyy.UnityKitModule.Clipboard
                                 isOverrite = EditorUtility.DisplayDialog("提示", strOverriteAsk, "覆盖", "跳过");
                                 isAsked = true;
                             }
+
                             if (isOverrite)
                                 File.Delete(destName);
                             else
-                                continue;   
+                                continue;
                         }
+
                         File.Copy(source, destName);
                     }
                     else
                     {
-                        CopyDir(source, destName,ref isOverrite,ref isAsked);
+                        CopyDir(source, destName, ref isOverrite, ref isAsked);
                     }
                 }
             }
@@ -199,11 +211,13 @@ namespace Liangddyy.UnityKitModule.Clipboard
             {
                 if (isAuto) EditorPrefs.SetBool(KeyAutoRefresh, true);
             }
+
             AssetDatabase.Refresh();
         }
 
         private static readonly string strOverriteAsk = "此次粘贴资源中有重名资源。如何操作？";
-        public static void CopyDir(string sourcePath, string destinationPath,ref bool isOverrite,ref bool isAsked)
+
+        public static void CopyDir(string sourcePath, string destinationPath, ref bool isOverrite, ref bool isAsked)
         {
             DirectoryInfo info = new DirectoryInfo(sourcePath);
             if (!Directory.Exists(destinationPath))
@@ -221,17 +235,19 @@ namespace Liangddyy.UnityKitModule.Clipboard
                             isOverrite = EditorUtility.DisplayDialog("提示", strOverriteAsk, "覆盖", "跳过");
                             isAsked = true;
                         }
+
                         if (isOverrite)
                             File.Delete(destName);
                         else
                             continue;
-                    }   
+                    }
+
                     File.Copy(fsi.FullName, destName);
                 }
                 else
                 {
                     Directory.CreateDirectory(destName);
-                    CopyDir(fsi.FullName, destName,ref isOverrite,ref isAsked);
+                    CopyDir(fsi.FullName, destName, ref isOverrite, ref isAsked);
                 }
             }
         }
@@ -344,6 +360,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
                         packageUtilityType
                             = typeof(MenuItem).Assembly.GetType("UnityEditor.PackageUtility");
                     }
+
                     return packageUtilityType;
                 }
             }
@@ -380,6 +397,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
                         destinationAssetPathFieldInfo
                             = importPackageItem.GetField("destinationAssetPath");
                     }
+
                     return destinationAssetPathFieldInfo;
                 }
             }

@@ -7,5 +7,6 @@ namespace Liangddyy.UnityKitModule
 {
     public class Class1
     {
+        
     }
 }
