@@ -62,6 +62,7 @@
     <Compile Include="Src\Common\PlatformEditor.cs" />
     <Compile Include="Src\Common\SelectionUtil.cs" />
     <Compile Include="Src\Common\ShellUtil.cs" />
+    <Compile Include="Src\Context\ContextUtility.cs" />
     <Compile Include="Src\Folder\MkLink.cs" />
     <Compile Include="Src\ModuleInstall.cs" />
     <Compile Include="Src\ShellHelper\ShellHelper.cs" />
