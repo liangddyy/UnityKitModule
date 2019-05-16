@@ -80,23 +80,31 @@ namespace Liangddyy.UnityKitModule
                 return;
             }
 
-            isSuccess = EditorUtility.DisplayDialog("安装失败",
-                "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。", "手动操作", "cancel");
-            if (isSuccess)
+            if (KitUtility.IsOSXEditor)
             {
-                string modulePath = Path.Combine(Application.temporaryCachePath, moduleOrDllName);
-                if (Directory.Exists(modulePath))
-                    Directory.Delete(modulePath, true);
-                isSuccess = WriteModule2File(dllFilePath, modulePath, moduleOrDllName);
+                Debug.LogError("安装失败");
+                // todo 创建到另外一个文件夹后,由用户复制.
+            }
+            else
+            {
+                isSuccess = EditorUtility.DisplayDialog("安装失败",
+                    "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。", "手动操作", "cancel");
                 if (isSuccess)
                 {
-                    QuickCopy.CopyToClipboard(new List<string>() {modulePath});
-                    EditorUtility.OpenWithDefaultApp(PathUtil.UnityExtensionDir);
-                    Debug.Log("已打开拓展文件夹" + PathUtil.UnityExtensionDir + " 直接右键粘贴即可安装模块。请注意，粘贴模块文件后，下次启动 Unity 生效。");
-                }
-                else
-                {
-                    Debug.Log("error");
+                    string modulePath = Path.Combine(Application.temporaryCachePath, moduleOrDllName);
+                    if (Directory.Exists(modulePath))
+                        Directory.Delete(modulePath, true);
+                    isSuccess = WriteModule2File(dllFilePath, modulePath, moduleOrDllName);
+                    if (isSuccess)
+                    {
+                        QuickCopy.CopyToClipboard(new List<string>() {modulePath});
+                        EditorUtility.OpenWithDefaultApp(PathUtil.UnityExtensionDir);
+                        Debug.Log("已打开拓展文件夹" + PathUtil.UnityExtensionDir + " 直接右键粘贴即可安装模块。请注意，粘贴模块文件后，下次启动 Unity 生效。");
+                    }
+                    else
+                    {
+                        Debug.Log("error");
+                    }
                 }
             }
         }

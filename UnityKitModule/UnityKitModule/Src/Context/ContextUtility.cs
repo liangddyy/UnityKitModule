@@ -3,10 +3,12 @@
 // 描述：
 //=======================================================
 
+using System;
+using Liangddyy.UnityKitModule.Common;
 using UnityEngine;
 using UnityEditor;
 
-namespace Babybus.Project
+namespace Liangddyy.UnityKitModule
 {
     public class ContextUtility
     {
@@ -83,7 +85,15 @@ namespace Babybus.Project
         {
             Transform trans = (Transform) command.context;
             Undo.RecordObject(trans, "Remove All Components");
-            KitUtility.ForEachChilds(trans, RemoveAllComponents);
+            try
+            {
+                KitUtility.ForEachChilds(trans, RemoveAllComponents);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+                Debug.LogError("遇到了一些错误,再试一下");
+            }
         }
     }
 }

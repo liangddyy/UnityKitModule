@@ -16,7 +16,7 @@ namespace Liangddyy.UnityKitModule.Common
         {
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = "powershell";
+                process.StartInfo.FileName = "/bin/bash"; //"powershell";
                 process.StartInfo.Arguments = command;
 
                 process.StartInfo.CreateNoWindow = true; // 是否要查看powershell窗口执行过程

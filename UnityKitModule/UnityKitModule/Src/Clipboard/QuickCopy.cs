@@ -32,7 +32,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
             }
             catch (FormatException e)
             {
-                throw new FormatException("没有从剪切板解析到有效的数据!");
+                throw new FormatException("没有从剪切板解析到有效的数据!" + e.Message);
             }
 
             if (item == null) throw new ArgumentException("没有从剪切板解析到有效的数据!");
@@ -79,10 +79,9 @@ namespace Liangddyy.UnityKitModule.Clipboard
             return Selection.assetGUIDs.Length > 0;
         }
 
-#if UNITY_EDITOR_WIN
-/// <summary>
-/// 仅限Windows平台下使用
-/// </summary>
+        /// <summary>
+        /// 仅限Windows平台下使用
+        /// </summary>
         [MenuItem("Assets/工具箱/复制 - 到剪贴板", false, 22)]
         private static void CopyToClipboard()
         {
@@ -93,10 +92,15 @@ namespace Liangddyy.UnityKitModule.Clipboard
                 path = PathUtil.AssetPath2FullPath(path);
                 paths.Add(path);
             }
+
             CopyToClipboard(paths);
         }
-#endif
 
+        [MenuItem("Assets/工具箱/复制 - 到剪贴板", true)]
+        private static bool CanCopyToClipboard()
+        {
+            return !KitUtility.IsOSXEditor;
+        }
 
         public static void CopyToClipboard(List<string> fullPaths)
         {

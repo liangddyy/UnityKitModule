@@ -4,12 +4,21 @@
 //=======================================================
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
-namespace Babybus.Project
+namespace Liangddyy.UnityKitModule
 {
     public class KitUtility
     {
+        
+        public static bool IsOSXEditor
+        {
+            get { return Application.dataPath.StartsWith("/"); }
+        }
+        
         /// <summary>
         /// 遍历一个物体
         /// </summary>
@@ -23,6 +32,19 @@ namespace Babybus.Project
                 var item = parent.GetChild(i);
                 ForEachChilds(item, callback, true);
             }
+        }
+        
+        public static List<string> GetFiles(string path, Func<string, bool> filter = null)
+        {
+            if (!Directory.Exists(path))
+                return null;
+
+            IEnumerable<string> files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+
+            if (filter != null)
+                files = files.Where(filter).ToList();
+
+            return files.ToList();
         }
     }
 }

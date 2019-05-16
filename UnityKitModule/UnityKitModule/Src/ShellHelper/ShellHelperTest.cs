@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Liangddyy.UnityKitModule;
 using UnityEditor;
 
 /// <summary>
@@ -20,12 +21,10 @@ public class ShellHelperTest
     [MenuItem("ShellHelperTest/dir")]
     public static void dir()
     {
-#if UNITY_EDITOR_WIN
-		ShellHelper.ShellRequest req = ShellHelper.ProcessCommand("dir","");
+		ShellHelper.ShellRequest req = ShellHelper.ProcessCommand( "dir","");
 		req.onLog += delegate(int arg1, string arg2) {
 			Debug.Log(arg2);
 		};
-		
-		#endif
+
     }
 }

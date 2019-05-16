@@ -1,225 +1,237 @@
 ﻿using System.Diagnostics;
 using UnityEditor;
 using System.Collections.Generic;
+using Liangddyy.UnityKitModule.Common;
 
-public class ShellHelper
+namespace Liangddyy.UnityKitModule
 {
     /// <summary>
-    /// from https://github.com/wlgys8/UnityShellHelper
+    /// Module DLL 下平台判断不能用 预编译.
     /// </summary>
-    public class ShellRequest
+    public class ShellHelper
     {
-        public event System.Action<int, string> onLog;
-        public event System.Action onError;
-        public event System.Action onDone;
-
-        public void Log(int type, string log)
+        /// <summary>
+        /// from https://github.com/wlgys8/UnityShellHelper
+        /// </summary>
+        public class ShellRequest
         {
-            if (onLog != null)
+            public event System.Action<int, string> onLog;
+            public event System.Action onError;
+            public event System.Action onDone;
+
+            public void Log(int type, string log)
             {
-                onLog(type, log);
-            }
-
-            if (type == 1)
-            {
-                UnityEngine.Debug.LogError(log);
-            }
-        }
-
-        public void NotifyDone()
-        {
-            if (onDone != null)
-            {
-                onDone();
-            }
-        }
-
-        public void Error()
-        {
-            if (onError != null)
-            {
-                onError();
-            }
-        }
-    }
-
-
-    private static string shellApp
-    {
-        get
-        {
-            string app = "";
-#if UNITY_EDITOR_WIN
-			app = "cmd.exe";
-#elif UNITY_EDITOR_OSX
-            app = "bash";
-#endif
-            return app;
-        }
-    }
-
-
-    private static List<System.Action> _queue = new List<System.Action>();
-
-
-    static ShellHelper()
-    {
-        _queue = new List<System.Action>();
-        EditorApplication.update += OnUpdate;
-    }
-
-    private static void OnUpdate()
-    {
-        for (int i = 0; i < _queue.Count; i++)
-        {
-            try
-            {
-                var action = _queue[i];
-                if (action != null)
+                if (onLog != null)
                 {
-                    action();
-                }
-            }
-            catch (System.Exception e)
-            {
-                UnityEngine.Debug.LogException(e);
-            }
-        }
-
-        _queue.Clear();
-    }
-
-
-    public static ShellRequest ProcessCommand(string cmd, string workDirectory, List<string> environmentVars = null)
-    {
-        ShellRequest req = new ShellRequest();
-        System.Threading.ThreadPool.QueueUserWorkItem(delegate(object state)
-        {
-            Process p = null;
-            try
-            {
-                ProcessStartInfo start = new ProcessStartInfo(shellApp);
-
-                string splitChar = "";
-#if UNITY_EDITOR_OSX
-                splitChar = ":";
-                start.Arguments = "-c";
-#elif UNITY_EDITOR_WIN
-				splitChar = ";";
-				start.Arguments = "/c";
-				#endif
-
-                if (environmentVars != null)
-                {
-                    foreach (string var in environmentVars)
-                    {
-                        start.EnvironmentVariables["PATH"] += (splitChar + var);
-                    }
+                    onLog(type, log);
                 }
 
-                start.Arguments += (" \"" + cmd + " \"");
-                start.CreateNoWindow = true;
-                start.ErrorDialog = true;
-                start.UseShellExecute = false;
-                start.WorkingDirectory = workDirectory;
-
-                if (start.UseShellExecute)
+                if (type == 1)
                 {
-                    start.RedirectStandardOutput = false;
-                    start.RedirectStandardError = false;
-                    start.RedirectStandardInput = false;
+                    UnityEngine.Debug.LogError(log);
+                }
+            }
+
+            public void NotifyDone()
+            {
+                if (onDone != null)
+                {
+                    onDone();
+                }
+            }
+
+            public void Error()
+            {
+                if (onError != null)
+                {
+                    onError();
+                }
+            }
+        }
+
+
+        private static string shellApp
+        {
+            get
+            {
+                string app = "";
+                if(KitUtility.IsOSXEditor)
+                {
+                    app = "bash"; // "/bin/bash" ,"bash"
                 }
                 else
                 {
-                    start.RedirectStandardOutput = true;
-                    start.RedirectStandardError = true;
-                    start.RedirectStandardInput = true;
-                    start.StandardOutputEncoding = System.Text.UTF8Encoding.UTF8;
-                    start.StandardErrorEncoding = System.Text.UTF8Encoding.UTF8;
+                    app = "cmd.exe";
                 }
+                return app;
+            }
+        }
 
-                p = Process.Start(start);
-                p.ErrorDataReceived += delegate(object sender, DataReceivedEventArgs e)
-                {
-                    UnityEngine.Debug.LogError(e.Data);
-                };
-                p.OutputDataReceived += delegate(object sender, DataReceivedEventArgs e)
-                {
-                    UnityEngine.Debug.LogError(e.Data);
-                };
-                p.Exited += delegate(object sender, System.EventArgs e) { UnityEngine.Debug.LogError(e.ToString()); };
 
-                bool hasError = false;
-                do
+        private static List<System.Action> _queue = new List<System.Action>();
+
+
+        static ShellHelper()
+        {
+            _queue = new List<System.Action>();
+            EditorApplication.update += OnUpdate;
+        }
+
+        private static void OnUpdate()
+        {
+            for (int i = 0; i < _queue.Count; i++)
+            {
+                try
                 {
-                    string line = p.StandardOutput.ReadLine();
-                    if (line == null)
+                    var action = _queue[i];
+                    if (action != null)
                     {
-                        break;
+                        action();
                     }
-
-                    line = line.Replace("\\", "/");
-
-                    _queue.Add(delegate() { req.Log(0, line); });
-                } while (true);
-
-                while (true)
-                {
-                    string error = p.StandardError.ReadLine();
-                    if (string.IsNullOrEmpty(error))
-                    {
-                        break;
-                    }
-
-                    hasError = true;
-                    _queue.Add(delegate() { req.Log(1, error); });
                 }
-
-                p.Close();
-                if (hasError)
+                catch (System.Exception e)
                 {
-                    _queue.Add(delegate() { req.Error(); });
-                }
-                else
-                {
-                    _queue.Add(delegate() { req.NotifyDone(); });
+                    UnityEngine.Debug.LogException(e);
                 }
             }
-            catch (System.Exception e)
+
+            _queue.Clear();
+        }
+
+
+        public static ShellRequest ProcessCommand(string cmd, string workDirectory,
+            List<string> environmentVars = null)
+        {
+            ShellRequest req = new ShellRequest();
+            ProcessStartInfo start = new ProcessStartInfo(shellApp);
+            bool isOSX = KitUtility.IsOSXEditor;
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate(object state)
             {
-                UnityEngine.Debug.LogException(e);
-                if (p != null)
+                Process p = null;
+                try
                 {
+                    string splitChar = "";
+                    if (isOSX)
+                    {
+                        splitChar = ":";
+                        start.Arguments = "-c";
+                    }
+                    else
+                    {
+                        splitChar = ";";
+                        start.Arguments = "/c";
+                    }
+
+                    if (environmentVars != null)
+                    {
+                        foreach (string var in environmentVars)
+                        {
+                            start.EnvironmentVariables["PATH"] += (splitChar + var);
+                        }
+                    }
+
+                    start.Arguments += (" \"" + cmd + " \"");
+                    start.CreateNoWindow = true;
+                    start.ErrorDialog = true;
+                    start.UseShellExecute = false;
+                    start.WorkingDirectory = workDirectory;
+
+                    if (start.UseShellExecute)
+                    {
+                        start.RedirectStandardOutput = false;
+                        start.RedirectStandardError = false;
+                        start.RedirectStandardInput = false;
+                    }
+                    else
+                    {
+                        start.RedirectStandardOutput = true;
+                        start.RedirectStandardError = true;
+                        start.RedirectStandardInput = true;
+                        start.StandardOutputEncoding = System.Text.UTF8Encoding.UTF8;
+                        start.StandardErrorEncoding = System.Text.UTF8Encoding.UTF8;
+                    }
+
+                    p = Process.Start(start);
+                    p.ErrorDataReceived += delegate(object sender, DataReceivedEventArgs e)
+                    {
+                        UnityEngine.Debug.LogError(e.Data);
+                    };
+                    p.OutputDataReceived += delegate(object sender, DataReceivedEventArgs e)
+                    {
+                        UnityEngine.Debug.LogError(e.Data);
+                    };
+                    p.Exited += delegate(object sender, System.EventArgs e)
+                    {
+                        UnityEngine.Debug.LogError(e.ToString());
+                    };
+
+                    bool hasError = false;
+                    do
+                    {
+                        string line = p.StandardOutput.ReadLine();
+                        if (line == null)
+                        {
+                            break;
+                        }
+
+                        line = line.Replace("\\", "/");
+
+                        _queue.Add(delegate() { req.Log(0, line); });
+                    } while (true);
+
+                    while (true)
+                    {
+                        string error = p.StandardError.ReadLine();
+                        if (string.IsNullOrEmpty(error))
+                        {
+                            break;
+                        }
+
+                        hasError = true;
+                        _queue.Add(delegate() { req.Log(1, error); });
+                    }
+
                     p.Close();
+                    if (hasError)
+                    {
+                        _queue.Add(delegate() { req.Error(); });
+                    }
+                    else
+                    {
+                        _queue.Add(delegate() { req.NotifyDone(); });
+                    }
                 }
-            }
-        });
-        return req;
-    }
-
-
-    private List<string> _enviroumentVars = new List<string>();
-
-    public void AddEnvironmentVars(params string[] vars)
-    {
-        for (int i = 0; i < vars.Length; i++)
-        {
-            if (vars[i] == null)
-            {
-                continue;
-            }
-
-            if (string.IsNullOrEmpty(vars[i].Trim()))
-            {
-                continue;
-            }
-
-            _enviroumentVars.Add(vars[i]);
+                catch (System.Exception e)
+                {
+                    UnityEngine.Debug.LogException(e);
+                    if (p != null)
+                    {
+                        p.Close();
+                    }
+                }
+            });
+            return req;
         }
-    }
 
-    public ShellRequest ProcessCMD(string cmd, string workDir)
-    {
-        return ShellHelper.ProcessCommand(cmd, workDir, _enviroumentVars);
+
+        private List<string> _enviroumentVars = new List<string>();
+
+        public void AddEnvironmentVars(params string[] vars)
+        {
+            for (int i = 0; i < vars.Length; i++)
+            {
+                if (vars[i] == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(vars[i].Trim()))
+                {
+                    continue;
+                }
+
+                _enviroumentVars.Add(vars[i]);
+            }
+        }
     }
 }
