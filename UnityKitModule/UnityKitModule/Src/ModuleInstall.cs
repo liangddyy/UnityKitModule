@@ -80,15 +80,26 @@ namespace Liangddyy.UnityKitModule
                 return;
             }
 
+            // 失败.
             if (KitUtility.IsOSXEditor)
             {
-                Debug.LogError("安装失败");
-                // todo 创建到另外一个文件夹后,由用户复制.
+                string modulePath = Path.Combine(Path.GetDirectoryName(Application.dataPath),"Temp/"+ moduleOrDllName);
+                if (Directory.Exists(modulePath))
+                    Directory.Delete(modulePath, true);
+                isSuccess = WriteModule2File(dllFilePath, modulePath, moduleOrDllName);
+                Debug.LogError("似乎没有权限写入路径:" + moduleDir);
+                if (isSuccess)
+                {
+                    EditorUtility.OpenWithDefaultApp(modulePath);
+                    EditorUtility.OpenWithDefaultApp(PathUtil.UnityExtensionDir);
+                    Debug.Log("请手动拷贝文件夹:" + modulePath + " 到路径:" + PathUtil.UnityExtensionDir);
+                    Debug.Log("以上两个路径已打开,拷贝到正确目录后,重启Unity生效.");
+                }
             }
             else
             {
                 isSuccess = EditorUtility.DisplayDialog("安装失败",
-                    "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。", "手动操作", "cancel");
+                    HowFixWindow, "手动操作", "cancel");
                 if (isSuccess)
                 {
                     string modulePath = Path.Combine(Application.temporaryCachePath, moduleOrDllName);
@@ -108,5 +119,8 @@ namespace Liangddyy.UnityKitModule
                 }
             }
         }
+
+        private static readonly string HowFixWindow =
+        "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。";
     }
 }
