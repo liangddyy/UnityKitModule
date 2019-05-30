@@ -34,13 +34,14 @@ Unity编辑器的右键菜单工具集。项目间复制、建立硬链接等
 
 快速建立文件夹硬链接
 
-* 工具箱 -> 硬链接（Mac下为软链接）
+* 工具箱 -> 硬链接（Mac OS下为软链接）
+
 
 ### Hierarchy
 
 ### Inspector（Context）
 
-![Snipaste_2019-05-15_16-44-09](/Users/liangddyy/Documents/_Workspace/_my/UnityKitModule/Doc/Snipaste_2019-05-15_16-44-09.png)
+![Snipaste_2019-05-15_16-44-09](Doc/Snipaste_2019-05-15_16-44-09.png)
 
 * Reset All Child —— 重置该物体Position、Scale、Rotate
 * Reset All Child Position
@@ -50,10 +51,3 @@ Unity编辑器的右键菜单工具集。项目间复制、建立硬链接等
 * Remove All Components
 * Remove All Childs Components
 
-
-
-
-
-ln -s 可用文件夹。
-
-ln 只能是文件。
