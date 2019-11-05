@@ -31,32 +31,32 @@ namespace Liangddyy.UnityKitModule
             });
         }
 
-        [MenuItem("CONTEXT/Transform/Reset All Child Position", false, 112)]
-        private static void ResetChildsPosition(MenuCommand command)
-        {
-            Transform trans = (Transform) command.context;
-            var childs = trans.GetComponentsInChildren<Transform>();
-            Undo.RecordObjects(childs, "Reset All Child Position");
-            KitUtility.ForEachChilds(trans, (x) => { x.localPosition = Vector3.zero; });
-        }
-
-        [MenuItem("CONTEXT/Transform/Reset All Child Rotate", false, 113)]
-        private static void ResetChildsRotate(MenuCommand command)
-        {
-            Transform trans = (Transform) command.context;
-            var childs = trans.GetComponentsInChildren<Transform>();
-            Undo.RecordObjects(childs, "Reset All Child Rotate");
-            KitUtility.ForEachChilds(trans, (x) => { x.localEulerAngles = Vector3.zero; });
-        }
-
-        [MenuItem("CONTEXT/Transform/Reset All Child Scale", false, 114)]
-        private static void ResetChildsScale(MenuCommand command)
-        {
-            Transform trans = (Transform) command.context;
-            var childs = trans.GetComponentsInChildren<Transform>();
-            Undo.RecordObjects(childs, "Reset All Child Scale");
-            KitUtility.ForEachChilds(trans, (x) => { x.localScale = Vector3.one; });
-        }
+//        [MenuItem("CONTEXT/Transform/Reset All Child Position", false, 112)]
+//        private static void ResetChildsPosition(MenuCommand command)
+//        {
+//            Transform trans = (Transform) command.context;
+//            var childs = trans.GetComponentsInChildren<Transform>();
+//            Undo.RecordObjects(childs, "Reset All Child Position");
+//            KitUtility.ForEachChilds(trans, (x) => { x.localPosition = Vector3.zero; });
+//        }
+//
+//        [MenuItem("CONTEXT/Transform/Reset All Child Rotate", false, 113)]
+//        private static void ResetChildsRotate(MenuCommand command)
+//        {
+//            Transform trans = (Transform) command.context;
+//            var childs = trans.GetComponentsInChildren<Transform>();
+//            Undo.RecordObjects(childs, "Reset All Child Rotate");
+//            KitUtility.ForEachChilds(trans, (x) => { x.localEulerAngles = Vector3.zero; });
+//        }
+//
+//        [MenuItem("CONTEXT/Transform/Reset All Child Scale", false, 114)]
+//        private static void ResetChildsScale(MenuCommand command)
+//        {
+//            Transform trans = (Transform) command.context;
+//            var childs = trans.GetComponentsInChildren<Transform>();
+//            Undo.RecordObjects(childs, "Reset All Child Scale");
+//            KitUtility.ForEachChilds(trans, (x) => { x.localScale = Vector3.one; });
+//        }
 
         /// <summary>
         /// 移除当前对象的所有Component
