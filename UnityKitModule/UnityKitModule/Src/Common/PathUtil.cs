@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Liangddyy.UnityKitModule.Common
+namespace Liangddyy.UnityKitModule
 {
     public class PathUtil
     {

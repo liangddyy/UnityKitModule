@@ -7,18 +7,27 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Liangddyy.UnityKitModule
 {
-    public class KitUtility
+    public class CommonUtil
     {
-        
         public static bool IsOSXEditor
         {
             get { return Application.dataPath.StartsWith("/"); }
         }
-        
+
+        public static bool IsSelectSingleFloder()
+        {
+            if (Selection.assetGUIDs.Length != 1)
+                return false;
+            if (AssetDatabase.IsValidFolder(AssetDatabase.GUIDToAssetPath(Selection.assetGUIDs[0])))
+                return true;
+            return false;
+        }
+
         /// <summary>
         /// 遍历一个物体
         /// </summary>
@@ -33,7 +42,7 @@ namespace Liangddyy.UnityKitModule
                 ForEachChilds(item, callback, true);
             }
         }
-        
+
         public static List<string> GetFiles(string path, Func<string, bool> filter = null)
         {
             if (!Directory.Exists(path))

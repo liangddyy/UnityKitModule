@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
-namespace Liangddyy.UnityKitModule.Common
+namespace Liangddyy.UnityKitModule
 {
     public class ShellUtil
     {
@@ -16,7 +16,7 @@ namespace Liangddyy.UnityKitModule.Common
         {
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = KitUtility.IsOSXEditor?"/bin/bash":"powershell"; //"powershell";
+                process.StartInfo.FileName = CommonUtil.IsOSXEditor ? "/bin/bash" : "powershell"; //"powershell";
                 process.StartInfo.Arguments = command;
 
                 process.StartInfo.CreateNoWindow = true; // 是否要查看powershell窗口执行过程

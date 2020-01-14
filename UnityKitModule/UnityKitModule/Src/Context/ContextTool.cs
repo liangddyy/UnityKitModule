@@ -4,13 +4,12 @@
 //=======================================================
 
 using System;
-using Liangddyy.UnityKitModule.Common;
 using UnityEngine;
 using UnityEditor;
 
 namespace Liangddyy.UnityKitModule
 {
-    public class ContextUtility
+    public class ContextTool
     {
         /// <summary>
         /// 重置当前物体和所有子物体的Transform
@@ -23,7 +22,7 @@ namespace Liangddyy.UnityKitModule
             var childs = trans.GetComponentsInChildren<Transform>();
             Undo.RecordObjects(childs, "Reset All Child");
 
-            KitUtility.ForEachChilds(trans, (x) =>
+            CommonUtil.ForEachChilds(trans, (x) =>
             {
                 x.localPosition = Vector3.zero;
                 x.transform.localEulerAngles = Vector3.zero;
@@ -31,6 +30,7 @@ namespace Liangddyy.UnityKitModule
             });
         }
 
+        // 不必要的功能.
 //        [MenuItem("CONTEXT/Transform/Reset All Child Position", false, 112)]
 //        private static void ResetChildsPosition(MenuCommand command)
 //        {
@@ -87,7 +87,7 @@ namespace Liangddyy.UnityKitModule
             Undo.RecordObject(trans, "Remove All Components");
             try
             {
-                KitUtility.ForEachChilds(trans, RemoveAllComponents);
+                CommonUtil.ForEachChilds(trans, RemoveAllComponents);
             }
             catch (Exception e)
             {

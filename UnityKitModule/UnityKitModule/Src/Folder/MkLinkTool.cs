@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using Liangddyy.UnityKitModule.Common;
 using UnityEditor;
 using UnityEngine;
 
 namespace Liangddyy.UnityKitModule.Folder
 {
-    public class MkLink
+    public class MkLinkTool
     {
         [MenuItem("Assets/工具箱/硬链接", false, 22)]
         private static void LinkFloder()
@@ -101,7 +100,7 @@ namespace Liangddyy.UnityKitModule.Folder
         [MenuItem("Assets/工具箱/硬链接", true, 22)]
         private static bool LinkFloderValidate()
         {
-            return SelectionUtil.IsSingleFloder();
+            return CommonUtil.IsSelectSingleFloder();
         }
     }
 }

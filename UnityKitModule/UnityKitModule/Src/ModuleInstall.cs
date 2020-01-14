@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Liangddyy.UnityKitModule.Clipboard;
-using Liangddyy.UnityKitModule.Common;
 using UnityEditor;
 using UnityEngine;
 
@@ -81,9 +79,10 @@ namespace Liangddyy.UnityKitModule
             }
 
             // 失败.
-            if (KitUtility.IsOSXEditor)
+            if (CommonUtil.IsOSXEditor)
             {
-                string modulePath = Path.Combine(Path.GetDirectoryName(Application.dataPath),"Temp/"+ moduleOrDllName);
+                string modulePath =
+                    Path.Combine(Path.GetDirectoryName(Application.dataPath), "Temp/" + moduleOrDllName);
                 if (Directory.Exists(modulePath))
                     Directory.Delete(modulePath, true);
                 isSuccess = WriteModule2File(dllFilePath, modulePath, moduleOrDllName);
@@ -108,7 +107,7 @@ namespace Liangddyy.UnityKitModule
                     isSuccess = WriteModule2File(dllFilePath, modulePath, moduleOrDllName);
                     if (isSuccess)
                     {
-                        QuickCopy.CopyToClipboard(new List<string>() {modulePath});
+                        QuickCopyTool.CopyToClipboard(new List<string>() {modulePath});
                         EditorUtility.OpenWithDefaultApp(PathUtil.UnityExtensionDir);
                         Debug.Log("已打开拓展文件夹" + PathUtil.UnityExtensionDir + " 直接右键粘贴即可安装模块。请注意，粘贴模块文件后，下次启动 Unity 生效。");
                     }
@@ -121,6 +120,6 @@ namespace Liangddyy.UnityKitModule
         }
 
         private static readonly string HowFixWindow =
-        "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。";
+            "任选如下其一方案解决 ：\n1. 使用管理员权限启动Unity后重新安装。\n2. 手动安装，点击手动操作后，在打开的文件夹中直接右键粘贴即可。";
     }
 }

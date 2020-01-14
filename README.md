@@ -36,14 +36,12 @@ Unity编辑器的右键菜单工具集。项目间复制、建立硬链接等
 
 * 工具箱 -> 硬链接（Mac OS下为软链接）
 
+查找引用
 
-### Hierarchy
+### Inspector面板（Context）
 
-### Inspector（Context）
-
-![Snipaste_2019-05-15_16-44-09](Doc/Snipaste_2019-05-15_16-44-09.png)
-
-* Reset All Child —— 重置该物体Position、Scale、Rotate
 * Remove All Components
 * Remove All Childs Components
+
+### Hierarchy
 

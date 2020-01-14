@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using Liangddyy.UnityKitModule.Common;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
-namespace Liangddyy.UnityKitModule.Clipboard
+namespace Liangddyy.UnityKitModule
 {
-    public class QuickCopy
+    public class QuickCopyTool
     {
         #region 菜单
 
@@ -56,7 +54,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
         {
             if (string.IsNullOrEmpty(GUIUtility.systemCopyBuffer))
                 return false;
-            return SelectionUtil.IsSingleFloder();
+            return CommonUtil.IsSelectSingleFloder();
         }
 
         [MenuItem("Assets/复制 - 到编辑器", false, 21)]
@@ -99,7 +97,7 @@ namespace Liangddyy.UnityKitModule.Clipboard
         [MenuItem("Assets/工具箱/复制 - 到剪贴板", true)]
         private static bool CanCopyToClipboard()
         {
-            return !KitUtility.IsOSXEditor;
+            return !CommonUtil.IsOSXEditor;
         }
 
         public static void CopyToClipboard(List<string> fullPaths)

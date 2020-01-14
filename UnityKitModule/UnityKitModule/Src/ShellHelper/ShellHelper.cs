@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using UnityEditor;
 using System.Collections.Generic;
-using Liangddyy.UnityKitModule.Common;
 
 namespace Liangddyy.UnityKitModule
 {
@@ -55,7 +54,7 @@ namespace Liangddyy.UnityKitModule
             get
             {
                 string app = "";
-                if(KitUtility.IsOSXEditor)
+                if (CommonUtil.IsOSXEditor)
                 {
                     app = "bash"; // "/bin/bash" ,"bash"
                 }
@@ -63,6 +62,7 @@ namespace Liangddyy.UnityKitModule
                 {
                     app = "cmd.exe";
                 }
+
                 return app;
             }
         }
@@ -104,7 +104,7 @@ namespace Liangddyy.UnityKitModule
         {
             ShellRequest req = new ShellRequest();
             ProcessStartInfo start = new ProcessStartInfo(shellApp);
-            bool isOSX = KitUtility.IsOSXEditor;
+            bool isOSX = CommonUtil.IsOSXEditor;
             System.Threading.ThreadPool.QueueUserWorkItem(delegate(object state)
             {
                 Process p = null;
